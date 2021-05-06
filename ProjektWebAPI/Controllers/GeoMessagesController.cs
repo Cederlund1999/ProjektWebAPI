@@ -22,14 +22,14 @@ namespace ProjektWebAPI.Controllers
         }
 
         // GET: api/GeoMessages
-        [HttpGet]
+        [HttpGet("/v1/Geo-Messages")]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {
             return await _context.GeoMessages.ToListAsync();
         }
 
         // GET: api/GeoMessages/5
-        [HttpGet("{id}")]
+        [HttpGet("/v1/Geo-Messages/{id}")]
         public async Task<ActionResult<GeoMessage>> GetGeoMessage(int id)
         {
             var geoMessage = await _context.GeoMessages.FindAsync(id);
@@ -39,7 +39,7 @@ namespace ProjektWebAPI.Controllers
                 return NotFound();
             }
 
-            return geoMessage;
+            return Ok(geoMessage);
         }
 
         // PUT: api/GeoMessages/5
@@ -75,13 +75,24 @@ namespace ProjektWebAPI.Controllers
 
         // POST: api/GeoMessages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("/v1/Geo-Messages")]
         public async Task<ActionResult<GeoMessage>> PostGeoMessage(GeoMessage geoMessage)
         {
-            _context.GeoMessages.Add(geoMessage);
+            var newMessage = new GeoMessage
+            {
+                Longitude = geoMessage.Longitude,
+                Latitude = geoMessage.Latitude,
+                Message = geoMessage.Message
+            };
+            await _context.AddAsync(newMessage);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetGeoMessage", new { id = geoMessage.Id }, geoMessage);
+            return CreatedAtAction("GetGeoMessage", new { id = newMessage.Id }, newMessage);
+
+            /*_context.GeoMessages.Add(geoMessage);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetGeoMessage", new { id = geoMessage.Id }, geoMessage);*/
         }
 
         // DELETE: api/GeoMessages/5
