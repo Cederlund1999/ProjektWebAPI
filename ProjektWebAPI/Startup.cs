@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjektWebAPI.Models;
+using Microsoft.AspNetCore.Authentication;
+using ProjektWebAPI.ApiKey;
 
 namespace ProjektWebAPI
 {
@@ -31,6 +33,8 @@ namespace ProjektWebAPI
         {
             services.AddDbContext<GeoMessageDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("GeoMessageDbContext")));
+            services.AddAuthentication("MyAuthScheme")
+                .AddScheme<AuthenticationSchemeOptions, MyAuthenticationHandler>("MyAuthScheme", null);
             services.AddDefaultIdentity<User>(options =>
             {
                 options.User.RequireUniqueEmail = true;
