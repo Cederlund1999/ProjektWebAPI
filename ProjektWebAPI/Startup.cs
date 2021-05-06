@@ -31,20 +31,24 @@ namespace ProjektWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<GeoMessageDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("GeoMessageDbContext")));
-            services.AddAuthentication("MyAuthScheme")
-                .AddScheme<AuthenticationSchemeOptions, MyAuthenticationHandler>("MyAuthScheme", null);
-            services.AddDefaultIdentity<User>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-            });
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjektWebAPI", Version = "v1" });
             });
+
+            services.AddDbContext<GeoMessageDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("GeoMessageDbContext")));
+            /* services.AddAuthentication("MyAuthScheme")
+                 .AddScheme<AuthenticationSchemeOptions, MyAuthenticationHandler>("MyAuthScheme", null);
+             services.AddDefaultIdentity<User>(options =>
+             {
+                 options.User.RequireUniqueEmail = true;
+             });*/
+            services.AddDefaultIdentity<User>()
+             .AddEntityFrameworkStores<GeoMessageDbContext>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
