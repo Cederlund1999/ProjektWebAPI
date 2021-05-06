@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjektWebAPI.Models;
 
 namespace ProjektWebAPI
 {
@@ -30,6 +31,10 @@ namespace ProjektWebAPI
         {
             services.AddDbContext<GeoMessageDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("GeoMessageDbContext")));
+            services.AddDefaultIdentity<User>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
