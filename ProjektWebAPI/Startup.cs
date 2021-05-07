@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjektWebAPI.Models;
 using Microsoft.AspNetCore.Authentication;
 using ProjektWebAPI.ApiKey;
+using Microsoft.AspNetCore.Identity;
 
 namespace ProjektWebAPI
 {
@@ -35,20 +36,41 @@ namespace ProjektWebAPI
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjektWebAPI", Version = "v1" });
+                c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic",
+                    In = ParameterLocation.Header,
+                    Description = "Basic Authorization header using the Bearer scheme"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "basic"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
             });
+            
+
+
 
             services.AddDbContext<GeoMessageDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("GeoMessageDbContext")));
-            /* services.AddAuthentication("MyAuthScheme")
-                 .AddScheme<AuthenticationSchemeOptions, MyAuthenticationHandler>("MyAuthScheme", null);
-             services.AddDefaultIdentity<User>(options =>
-             {
-                 options.User.RequireUniqueEmail = true;
-             });*/
-            services.AddDefaultIdentity<User>()
+            
+            services.AddDefaultIdentity<IdentityUser>()
              .AddEntityFrameworkStores<GeoMessageDbContext>();
 
-
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>("BasicAuthentication", null);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +87,8 @@ namespace ProjektWebAPI
 
             app.UseRouting();
 
+            
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

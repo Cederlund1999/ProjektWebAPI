@@ -15,25 +15,15 @@ namespace ProjektWebAPI
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<GeoMessageDbContext>();
-                    var userManager = services.GetRequiredService<UserManager<User>>();
+                var prov = scope.ServiceProvider;
 
-                    await context.SeedDatabase(userManager);
-                }
-                catch (Exception e)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(e, "error error");
-                }
+                GeoMessageDbContext.Reset(prov).Wait();
             }
 
             host.Run();

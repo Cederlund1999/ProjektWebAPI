@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ProjektWebAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ProjektWebAPI.Data
 {
-    public class GeoMessageDbContext : IdentityDbContext<User>
+    public class GeoMessageDbContext : IdentityDbContext<IdentityUser>
     {
         public GeoMessageDbContext(DbContextOptions<GeoMessageDbContext> options)
             : base(options)
@@ -17,26 +18,25 @@ namespace ProjektWebAPI.Data
 
         }
         public DbSet<GeoMessage> GeoMessages {get;set;}
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
 
-        public async Task SeedDatabase(UserManager<User> userManager)
+        public static async Task Reset(IServiceProvider prov)
         {
-            await Database.EnsureDeletedAsync();
-            await Database.EnsureCreatedAsync();
-            
+            var context = prov.GetRequiredService<GeoMessageDbContext>();
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
 
-            var messageTest = new GeoMessage
-            {
-                Latitude = 30.3,
-                Longitude = 25.1,
-                Message = "Test"
-            };
-            var user = new User
-            { UserName = "Test1", FirstName = "testnamn", LastName = "TestEfternamn" };
+            var userManager = prov.GetRequiredService<UserManager<IdentityUser>>();
+
+            await userManager.CreateAsync(
+                new IdentityUser
+                {
+                    UserName = "TestUser"
+                },
+                "QWEqwe123!!");
             
-            await userManager.CreateAsync(user);
-            await AddAsync(messageTest);
-            await SaveChangesAsync();
+            
         }
     }
 }
+

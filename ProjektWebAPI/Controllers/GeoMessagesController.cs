@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace ProjektWebAPI.Controllers
         }
 
         // GET: api/GeoMessages
+        
         [HttpGet("/v1/Geo-Messages")]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {
@@ -75,9 +77,10 @@ namespace ProjektWebAPI.Controllers
 
         // POST: api/GeoMessages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost("/v1/Geo-Messages")]
         public async Task<ActionResult<GeoMessage>> PostGeoMessage(GeoMessage geoMessage)
-        {
+        {       
             var newMessage = new GeoMessage
             {
                 Longitude = geoMessage.Longitude,
