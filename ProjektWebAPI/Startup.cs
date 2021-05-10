@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjektWebAPI.Models;
 using Microsoft.AspNetCore.Authentication;
-using ProjektWebAPI.ApiKey;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ProjektWebAPI
