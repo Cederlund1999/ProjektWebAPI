@@ -23,7 +23,7 @@ namespace ProjektWebAPI.Controllers
         }
 
         // GET: api/GeoMessages
-        
+
         [HttpGet("/v1/Geo-Messages")]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {

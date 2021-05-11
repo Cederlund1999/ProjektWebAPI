@@ -23,7 +23,7 @@ namespace ProjektWebAPI
             {
                 var prov = scope.ServiceProvider;
 
-                GeoMessageDbContext.Reset(prov).Wait();
+                GeoMessageDbContext.Seed(prov).Wait();
             }
 
             host.Run();

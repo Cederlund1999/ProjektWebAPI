@@ -71,6 +71,8 @@ namespace ProjektWebAPI
 
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>("BasicAuthentication", null);
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,14 +82,27 @@ namespace ProjektWebAPI
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjektWebAPI v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjektWebAPI v1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "ProjektWebAPI v2");
+                });
+
+
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            
+            app.UseCors(options => options
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                );
+
+
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -20,7 +20,7 @@ namespace ProjektWebAPI.Data
         public DbSet<GeoMessage> GeoMessages {get;set;}
         //public DbSet<User> Users { get; set; }
 
-        public static async Task Reset(IServiceProvider prov)
+        public static async Task Seed(IServiceProvider prov)
         {
             var context = prov.GetRequiredService<GeoMessageDbContext>();
             await context.Database.EnsureDeletedAsync();
@@ -29,9 +29,13 @@ namespace ProjektWebAPI.Data
             var userManager = prov.GetRequiredService<UserManager<IdentityUser>>();
 
             await userManager.CreateAsync(
-                new IdentityUser
+                new User
                 {
-                    UserName = "TestUser"
+                    FirstName ="Test",
+                    LastName="TestLastname",
+                    UserName="TestUser",
+                    Email="testMail@gmail.com"
+
                 },
                 "QWEqwe123!!");
             
