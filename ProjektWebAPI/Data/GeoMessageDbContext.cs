@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjektWebAPI.Models;
+using ProjektWebAPI.Models.V2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,8 @@ namespace ProjektWebAPI.Data
 
         }
         public DbSet<GeoMessage> GeoMessages {get;set;}
-        //public DbSet<User> Users { get; set; }
+        public DbSet<GeoMessageV2> GeoMessagesV2 { get; set; }
+        public DbSet<User> User { get; set; }
 
         public static async Task Seed(IServiceProvider prov)
         {

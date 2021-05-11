@@ -33,9 +33,23 @@ namespace ProjektWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddApiVersioning(o =>
+            {
+                o.DefaultApiVersion = new ApiVersion(2, 0);
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.ReportApiVersions = true;
+            });
+            services.AddVersionedApiExplorer(o =>
+            {
+                o.GroupNameFormat = "'v'VVV";
+                o.SubstituteApiVersionInUrl = true;
+            });
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjektWebAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoMessagesV1", Version = "v1" });
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "GeoMessagesV2", Version = "v2" });
+                c.EnableAnnotations();
                 c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",

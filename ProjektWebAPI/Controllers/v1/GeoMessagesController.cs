@@ -11,8 +11,10 @@ using ProjektWebAPI.Models;
 
 namespace ProjektWebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    
     public class GeoMessagesController : ControllerBase
     {
         private readonly GeoMessageDbContext _context;
