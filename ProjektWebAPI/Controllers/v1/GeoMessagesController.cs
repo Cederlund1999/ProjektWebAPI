@@ -51,7 +51,7 @@ namespace ProjektWebAPI.Controllers
         // POST: api/GeoMessages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
-        [HttpPost("/v1/Geo-Messages")]
+        [HttpPost("/v1/Geo-MessagesPost")]
         public async Task<ActionResult<GeoMessage>> PostGeoMessage(GeoMessage geoMessage)
         {       
             var newMessage = new GeoMessage

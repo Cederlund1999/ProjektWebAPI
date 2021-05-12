@@ -18,14 +18,14 @@ namespace ProjektWebAPI
 {
     public class BasicAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
         public BasicAuthHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            UserManager<IdentityUser> userManager)
+            UserManager<User> userManager)
             : base(options, logger, encoder, clock)
         {
             _userManager = userManager;
@@ -39,7 +39,7 @@ namespace ProjektWebAPI
                 return AuthenticateResult.Fail("Missing Authorization Header");
 
             
-            IdentityUser user;
+            User user;
             string password;
             try
             {

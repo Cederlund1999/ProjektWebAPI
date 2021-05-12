@@ -28,7 +28,7 @@ namespace ProjektWebAPI.Data
             await context.Database.EnsureDeletedAsync();
             await context.Database.EnsureCreatedAsync();
 
-            var userManager = prov.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = prov.GetRequiredService<UserManager<User>>();
 
             await userManager.CreateAsync(
                 new User

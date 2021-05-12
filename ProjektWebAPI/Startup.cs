@@ -80,7 +80,7 @@ namespace ProjektWebAPI
             services.AddDbContext<GeoMessageDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("GeoMessageDbContext")));
             
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<User>()
              .AddEntityFrameworkStores<GeoMessageDbContext>();
 
             services.AddAuthentication("BasicAuthentication")
