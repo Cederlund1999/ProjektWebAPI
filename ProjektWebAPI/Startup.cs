@@ -17,6 +17,7 @@ using ProjektWebAPI.Models;
 using Microsoft.AspNetCore.Authentication;
 
 using Microsoft.AspNetCore.Identity;
+using System.IO;
 
 namespace ProjektWebAPI
 {
@@ -49,6 +50,8 @@ namespace ProjektWebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoMessagesV1", Version = "v1" });
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "GeoMessagesV2", Version = "v2" });
+                var path = Path.Combine(AppContext.BaseDirectory, "Documentation.xml");
+                c.IncludeXmlComments(path);
                 c.EnableAnnotations();
                 c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
                 {

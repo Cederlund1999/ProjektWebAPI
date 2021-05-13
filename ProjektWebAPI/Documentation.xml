@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProjektWebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:ProjektWebAPI.Controllers.V2.GeoMessagesControllerV2.GetGeoMessages(System.Nullable{System.Double},System.Nullable{System.Double},System.Nullable{System.Double},System.Nullable{System.Double})">
+            <summary>
+            
+            </summary>
+            <param name="minLon">
+            <para>Minimum Longitude för geomessage</para>
+            </param>
+            <param name="maxLon">
+            <para>Max Longitude för geomessage</para>
+            </param>
+            <param name="minLat">
+            <para>Minimum Latitude för geomessage</para>
+            </param>
+            <param name="maxLat">
+            <para>Max Latitude för geomessage</para>
+            </param>
+            <returns>Returnerar geomessages som JSON objekt <see cref="T:ProjektWebAPI.Models.V2.GeoMessageV2"/></returns>
+        </member>
+    </members>
+</doc>

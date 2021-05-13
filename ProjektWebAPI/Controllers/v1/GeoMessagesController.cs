@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjektWebAPI.Data;
 using ProjektWebAPI.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ProjektWebAPI.Controllers
 {
@@ -27,6 +28,10 @@ namespace ProjektWebAPI.Controllers
         // GET: api/GeoMessages
 
         [HttpGet("/v1/Geo-Messages")]
+        [SwaggerOperation(
+            Summary ="Hämta Geomessages",
+            Description = "Hämtar alla Geomessages i v1")]
+        [SwaggerResponse(200, Description = "Alla Geomessages")]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {
             return await _context.GeoMessages.ToListAsync();
@@ -34,6 +39,10 @@ namespace ProjektWebAPI.Controllers
 
         // GET: api/GeoMessages/5
         [HttpGet("/v1/Geo-Messages/{id}")]
+        [SwaggerOperation(
+            Summary = "Hämta Geomessage på Id",
+            Description = "Hämtar ett Geomessage på Id")]
+            [SwaggerResponse(200, Description = "Hämtar Geomessage")]
         public async Task<ActionResult<GeoMessage>> GetGeoMessage(int id)
         {
             var geoMessage = await _context.GeoMessages.FindAsync(id);
@@ -52,6 +61,10 @@ namespace ProjektWebAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPost("/v1/Geo-MessagesPost")]
+        [SwaggerOperation(
+            Summary ="Skapa GeoMessage",
+            Description = "Skapar ett Geomessage")]
+        [SwaggerResponse(201, Description = "Ett nytt Geomessage har skapats")]
         public async Task<ActionResult<GeoMessage>> PostGeoMessage(GeoMessage geoMessage)
         {       
             var newMessage = new GeoMessage

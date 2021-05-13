@@ -10,8 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjektWebAPI.Data;
 using ProjektWebAPI.Models;
 using ProjektWebAPI.Models.V2;
-
-
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ProjektWebAPI.Controllers.V2
 {
@@ -34,8 +33,29 @@ namespace ProjektWebAPI.Controllers.V2
         }
 
         // GET: api/GeoMessages
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="minLon">
+        /// <para>Minimum Longitude för geomessage</para>
+        /// </param>
+        /// <param name="maxLon">
+        /// <para>Max Longitude för geomessage</para>
+        /// </param>
+        /// <param name="minLat">
+        /// <para>Minimum Latitude för geomessage</para>
+        /// </param>
+        /// <param name="maxLat">
+        /// <para>Max Latitude för geomessage</para>
+        /// </param>
+        /// <returns>Returnerar geomessages som JSON objekt/></returns>
 
         [HttpGet]
+        [SwaggerOperation(
+            Summary ="Hämta alla geomessages",
+            Description ="Hämtar alla geomessages i v2 inom det utsatta värderna i parametrarna." +
+            " Om något värde inte är ifyllt så hämtas alla geomessages.")]
+        [SwaggerResponse(200, Description = "Visar Geomessages")]
         public async Task<ActionResult<IEnumerable<GeoMessageV2>>> GetGeoMessages(
             double? minLon, double? maxLon, double? minLat, double? maxLat)
         {
@@ -43,6 +63,7 @@ namespace ProjektWebAPI.Controllers.V2
             {
                 
                 var GeoMessageList2 = await _context.GeoMessagesV2.ToListAsync();
+                
 
                 if (GeoMessageList2 == null)
                     return NotFound();
@@ -59,6 +80,10 @@ namespace ProjektWebAPI.Controllers.V2
 
         // GET: api/GeoMessages/5
         [HttpGet("{id}")]
+        [SwaggerOperation(
+            Summary ="Visar ett Geomessage",
+            Description ="Hämtar ett Geomessage i v2 på id")]
+        [SwaggerResponse(200, Description ="Ett Geomessage")]
         public async Task<ActionResult<GeoMessageV2>> GetGeoMessage(int id)
         {
             var geoMessage = await _context.GeoMessagesV2.FindAsync(id);
@@ -71,12 +96,16 @@ namespace ProjektWebAPI.Controllers.V2
             return Ok(geoMessage);
         }
 
-
+        
 
         // POST: api/GeoMessages
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Skapar ett Geomessage",
+            Description = "Skapar ett Geomessage som sparas i både v1 & v2")]
+        [SwaggerResponse(201, Description ="Nytt Geomessage har skapats")]
         public async Task<ActionResult<GeoMessageV2>> PostGeoMessage(GeoMessageV2 geoMessage)
         {
             
@@ -89,7 +118,15 @@ namespace ProjektWebAPI.Controllers.V2
                 Longitude = geoMessage.Longitude,
                 Latitude = geoMessage.Latitude
             };
+            var v1Msg = new GeoMessage()
+            {
+                Longitude = geoMessage.Longitude,
+                Latitude = geoMessage.Latitude,
+                Message = geoMessage.Body
+
+            };
             await _context.AddAsync(msg);
+            await _context.AddAsync(v1Msg);
             await _context.SaveChangesAsync();
 
 
