@@ -20,7 +20,7 @@
             <param name="maxLat">
             <para>Max Latitude för geomessage</para>
             </param>
-            <returns>Returnerar geomessages som JSON objekt <see cref="T:ProjektWebAPI.Models.V2.GeoMessageV2"/></returns>
+            <returns>Returnerar geomessages som JSON objekt/></returns>
         </member>
     </members>
 </doc>

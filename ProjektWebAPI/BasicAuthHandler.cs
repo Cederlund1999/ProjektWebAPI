@@ -67,8 +67,7 @@ namespace ProjektWebAPI
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
             };
-            if (user.Email != null) claims.Add(new Claim(ClaimTypes.Email, user.Email));
-            if (user.PhoneNumber != null) claims.Add(new Claim(ClaimTypes.MobilePhone, user.PhoneNumber));
+            
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
