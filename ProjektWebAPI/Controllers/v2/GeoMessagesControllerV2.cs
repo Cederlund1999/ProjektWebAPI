@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjektWebAPI.Data;
 using ProjektWebAPI.Models;
+using ProjektWebAPI.Models.v2;
 using ProjektWebAPI.Models.V2;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -53,28 +54,54 @@ namespace ProjektWebAPI.Controllers.V2
         [HttpGet]
         [SwaggerOperation(
             Summary ="Hämta alla geomessages",
-            Description ="Hämtar alla geomessages i v2 inom det utsatta värderna i parametrarna." +
-            " Om något värde inte är ifyllt så hämtas alla geomessages.")]
+            Description ="Hämtar ut alla geomessages beroende på inskrivet latitude och longitude. Om något inte är ifyllt hämtas alla messages ut.")]
         [SwaggerResponse(200, Description = "Visar Geomessages")]
-        public async Task<ActionResult<IEnumerable<GeoMessageV2>>> GetGeoMessages(
+        public async Task<ActionResult<IEnumerable<GeoMessageV2DTO>>> GetGeoMessages(
             double? minLon, double? maxLon, double? minLat, double? maxLat)
         {
             if(minLat == null || minLon == null || maxLat == null || maxLon == null)
             {
-                
-                var GeoMessageList2 = await _context.GeoMessagesV2.ToListAsync();
-                
 
-                if (GeoMessageList2 == null)
-                    return NotFound();
+                var v1 = await _context.GeoMessages.ToListAsync();
+                var v2 = await _context.GeoMessagesV2.ToListAsync();
 
-                return Ok(GeoMessageList2);
+                var list = formatV1(v1).Concat(formatV2(v2));
+                return Ok(list);
             }
             else
             {
-                var GeoMessageList2 = await _context.GeoMessagesV2.Where(
-                    z => z.Latitude >= minLat && z.Latitude <= maxLat && z.Longitude >= minLon && z.Longitude <= maxLon).ToListAsync();
-                return Ok(GeoMessageList2);
+                var v1 = await _context.GeoMessages.Where(x => x.Latitude >= minLat && x.Latitude <= maxLat && x.Longitude >= minLon && x.Longitude <= maxLon).ToListAsync();
+                var v2 = await _context.GeoMessagesV2.Where(x => x.Latitude >= minLat && x.Latitude <= maxLat && x.Longitude >= minLon && x.Longitude <= maxLon).ToListAsync();
+
+                var list = formatV1(v1).Concat(formatV2(v2));
+                return Ok(list);
+            }
+        }
+        private IEnumerable<GeoMessageV2DTO> formatV1(IEnumerable<GeoMessage> list)
+        {
+            foreach (var message in list)
+            {
+                var messageDTO = new GeoMessageV2DTO
+                {
+                   
+                    Message = new Message { Title = "test"},
+                    Longitude = message.Longitude,
+                    Latitude = message.Latitude
+                };
+                yield return messageDTO;
+            }
+        }
+        private IEnumerable<GeoMessageV2DTO> formatV2(IEnumerable<GeoMessageV2> list)
+        {
+            foreach (var message in list)
+            {
+                var messageDTO = new GeoMessageV2DTO
+                {
+                    Message = new Message { Title = message.Title, Body = message.Body, Author = message.Author },
+                    Longitude = message.Longitude,
+                    Latitude = message.Latitude
+                };
+                yield return messageDTO;
             }
         }
 
@@ -84,16 +111,28 @@ namespace ProjektWebAPI.Controllers.V2
             Summary ="Visar ett Geomessage",
             Description ="Hämtar ett Geomessage i v2 på id")]
         [SwaggerResponse(200, Description ="Ett Geomessage")]
-        public async Task<ActionResult<GeoMessageV2>> GetGeoMessage(int id)
+        public async Task<ActionResult<GeoMessageV2DTO>> GetGeoMessage(int id)
         {
             var geoMessage = await _context.GeoMessagesV2.FindAsync(id);
+
+            var messageDTO = new GeoMessageV2DTO
+            {
+                Message = new Message
+                {
+                    Title = geoMessage.Title,
+                    Body = geoMessage.Body,
+                    Author = geoMessage.Author
+                },
+                Longitude = geoMessage.Longitude,
+                Latitude = geoMessage.Latitude
+            };
 
             if (geoMessage == null)
             {
                 return NotFound();
             }
 
-            return Ok(geoMessage);
+            return messageDTO;
         }
 
         
@@ -106,7 +145,7 @@ namespace ProjektWebAPI.Controllers.V2
             Summary = "Skapar ett Geomessage",
             Description = "Skapar ett Geomessage som sparas i både v1 & v2")]
         [SwaggerResponse(201, Description ="Nytt Geomessage har skapats")]
-        public async Task<ActionResult<GeoMessageV2>> PostGeoMessage(GeoMessageV2 geoMessage)
+        public async Task<ActionResult<GeoMessageV2DTO>> PostGeoMessage(V2InputDTO geoMessage)
         {
             
             var user = await _context.User.FindAsync(_userManager.GetUserId(User));
@@ -118,19 +157,22 @@ namespace ProjektWebAPI.Controllers.V2
                 Longitude = geoMessage.Longitude,
                 Latitude = geoMessage.Latitude
             };
-            var v1Msg = new GeoMessage()
-            {
-                Longitude = geoMessage.Longitude,
-                Latitude = geoMessage.Latitude,
-                Message = geoMessage.Body
-
-            };
             await _context.AddAsync(msg);
-            await _context.AddAsync(v1Msg);
             await _context.SaveChangesAsync();
+            var messageDTO = new GeoMessageV2DTO
+            {
+                Message = new Message
+                {
+                    Title = msg.Title,
+                    Body = msg.Body,
+                    Author = msg.Author
+                },
+                Longitude = msg.Longitude,
+                Latitude = msg.Latitude
+            };
 
 
-            return CreatedAtAction("GetGeoMessage", new { id = msg.Id }, msg);
+            return CreatedAtAction("GetGeoMessage", new { id = msg.Id }, messageDTO);
 
             /*_context.GeoMessages.Add(geoMessage);
             await _context.SaveChangesAsync();
